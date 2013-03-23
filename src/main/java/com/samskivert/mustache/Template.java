@@ -81,7 +81,8 @@ public class Template
     public void execute (Object context, Object parentContext, Writer out) throws MustacheException
     {
         Context pctx = new Context(parentContext, null, 0, false, false);
-        executeSegs(new Context(context, pctx, 0, false, false), out);
+        Context ctx = pctx.nest(context, 0, false, false);
+        executeSegs(ctx, out);
     }
 
     protected Template (Segment[] segs, Mustache.Compiler compiler)
