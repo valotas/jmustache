@@ -566,7 +566,7 @@ public class Mustache
         public StringSegment (String text) {
             _text = text;
         }
-        @Override public void execute (Template tmpl, Template.Context ctx, Writer out) {
+        @Override public void execute (Template tmpl, Context ctx, Writer out) {
             write(out, _text);
         }
         protected final String _text;
@@ -577,7 +577,7 @@ public class Mustache
             _name = name;
             _compiler = compiler;
         }
-        @Override public void execute (Template tmpl, Template.Context ctx, Writer out) {
+        @Override public void execute (Template tmpl, Context ctx, Writer out) {
             // we compile our template lazily to avoid infinie recursion if a template includes
             // itself (see issue #13)
             if (_template == null) {
@@ -616,7 +616,7 @@ public class Mustache
             super(name, line);
             _escapeHTML = escapeHTML;
         }
-        @Override public void execute (Template tmpl, Template.Context ctx, Writer out)  {
+        @Override public void execute (Template tmpl, Context ctx, Writer out)  {
             Object value = tmpl.getValueOrDefault(ctx, _name, _line);
             if (value == null) {
                 throw new MustacheException.Context("No key, method or field with name '" + _name +
@@ -634,7 +634,7 @@ public class Mustache
             super(name, line);
             _segs = segs;
         }
-        protected void executeSegs (Template tmpl, Template.Context ctx, Writer out)  {
+        protected void executeSegs (Template tmpl, Context ctx, Writer out)  {
             for (Template.Segment seg : _segs) {
                 seg.execute(tmpl, ctx, out);
             }
@@ -648,7 +648,7 @@ public class Mustache
             super(name, segs, line);
             _compiler = compiler;
         }
-        @Override public void execute (Template tmpl, Template.Context ctx, Writer out)  {
+        @Override public void execute (Template tmpl, Context ctx, Writer out)  {
             Object value = tmpl.getSectionValue(ctx, _name, _line); // won't return null
             Iterator<?> iter = tmpl._compiler.collector.toIterator(value);
             if (iter != null) {
@@ -682,7 +682,7 @@ public class Mustache
         public InvertedSectionSegment (String name, Template.Segment[] segs, int line) {
             super(name, segs, line);
         }
-        @Override public void execute (Template tmpl, Template.Context ctx, Writer out)  {
+        @Override public void execute (Template tmpl, Context ctx, Writer out)  {
             Object value = tmpl.getSectionValue(ctx, _name, _line); // won't return null
             Iterator<?> iter = tmpl._compiler.collector.toIterator(value);
             if (iter != null) {
