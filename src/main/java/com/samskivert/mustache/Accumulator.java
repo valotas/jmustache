@@ -115,5 +115,5 @@ class Accumulator {
     }
 
     private final Compiler _compiler;
-    private final List<Segment> _segs = new ArrayList<Segment>();
+    protected final List<Segment> _segs = new ArrayList<Segment>();
 }
