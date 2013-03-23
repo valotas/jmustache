@@ -5,7 +5,6 @@
 
 package com.samskivert.mustache;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
@@ -111,18 +110,4 @@ public class Template
 
     protected final Segment[] _segs;
     protected final Mustache.Compiler _compiler;
-
-    /** A template is broken into segments. */
-    protected static abstract class Segment
-    {
-        abstract void execute (Template tmpl, Context ctx, Writer out);
-
-        protected static void write (Writer out, String data) {
-            try {
-                out.write(data);
-            } catch (IOException ioe) {
-                throw new MustacheException(ioe);
-            }
-        }
-    }
 }

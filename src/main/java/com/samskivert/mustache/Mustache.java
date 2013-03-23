@@ -479,7 +479,7 @@ public class Mustache
                         // if we just opened this section, we'll have no segments
                         return (_segs.isEmpty()) || super.justOpenedOrClosedBlock();
                     }
-                    @Override public Template.Segment[] finish () {
+                    @Override public Segment[] finish () {
                         throw new MustacheParseException(
                             "Section missing close tag '" + tag1 + "'", tagLine);
                     }
@@ -502,7 +502,7 @@ public class Mustache
                         // if we just opened this section, we'll have no segments
                         return (_segs.isEmpty()) || super.justOpenedOrClosedBlock();
                     }
-                    @Override public Template.Segment[] finish () {
+                    @Override public Segment[] finish () {
                         throw new MustacheParseException(
                             "Inverted section missing close tag '" + tag1 + "'", tagLine);
                     }
@@ -533,8 +533,8 @@ public class Mustache
             }
         }
 
-        public Template.Segment[] finish () {
-            return _segs.toArray(new Template.Segment[_segs.size()]);
+        public Segment[] finish () {
+            return _segs.toArray(new Segment[_segs.size()]);
         }
 
         protected Accumulator addCloseSectionSegment (String tag, int line) {
@@ -558,143 +558,7 @@ public class Mustache
         }
 
         protected final Compiler _compiler;
-        protected final List<Template.Segment> _segs = new ArrayList<Template.Segment>();
-    }
-
-    /** A simple segment that reproduces a string. */
-    protected static class StringSegment extends Template.Segment {
-        public StringSegment (String text) {
-            _text = text;
-        }
-        @Override public void execute (Template tmpl, Context ctx, Writer out) {
-            write(out, _text);
-        }
-        protected final String _text;
-    }
-
-    protected static class IncludedTemplateSegment extends Template.Segment {
-        public IncludedTemplateSegment (String name, Compiler compiler) {
-            _name = name;
-            _compiler = compiler;
-        }
-        @Override public void execute (Template tmpl, Context ctx, Writer out) {
-            // we compile our template lazily to avoid infinie recursion if a template includes
-            // itself (see issue #13)
-            if (_template == null) {
-                try {
-                    _template = _compiler.compile(_compiler.loader.getTemplate(_name));
-                } catch (Exception e) {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException)e;
-                    } else {
-                        throw new MustacheException("Unable to load template: " + _name, e);
-                    }
-                }
-            }
-            // we must take care to preserve our context rather than creating a new one, which
-            // would happen if we just called execute() with ctx.data
-            _template.executeSegs(ctx, out);
-        }
-        protected final String _name;
-        protected final Compiler _compiler;
-        protected Template _template;
-    }
-
-    /** A helper class for named segments. */
-    protected static abstract class NamedSegment extends Template.Segment {
-        protected NamedSegment (String name, int line) {
-            _name = name.intern();
-            _line = line;
-        }
-        protected final String _name;
-        protected final int _line;
-    }
-
-    /** A segment that substitutes the contents of a variable. */
-    protected static class VariableSegment extends NamedSegment {
-        public VariableSegment (String name, boolean escapeHTML, int line) {
-            super(name, line);
-            _escapeHTML = escapeHTML;
-        }
-        @Override public void execute (Template tmpl, Context ctx, Writer out)  {
-            Object value = ctx.getValueOrDefault(_name, _line);
-            if (value == null) {
-                throw new MustacheException.Context("No key, method or field with name '" + _name +
-                                                    "' on line " + _line, _name, _line);
-            }
-            String text = String.valueOf(value);
-            write(out, _escapeHTML ? escapeHTML(text) : text);
-        }
-        protected boolean _escapeHTML;
-    }
-
-    /** A helper class for block segments. */
-    protected static abstract class BlockSegment extends NamedSegment {
-        protected BlockSegment (String name, Template.Segment[] segs, int line) {
-            super(name, line);
-            _segs = segs;
-        }
-        protected void executeSegs (Template tmpl, Context ctx, Writer out)  {
-            for (Template.Segment seg : _segs) {
-                seg.execute(tmpl, ctx, out);
-            }
-        }
-        protected final Template.Segment[] _segs;
-    }
-
-    /** A segment that represents a section. */
-    protected static class SectionSegment extends BlockSegment {
-        public SectionSegment (String name, Template.Segment[] segs, int line, Compiler compiler) {
-            super(name, segs, line);
-            _compiler = compiler;
-        }
-        @Override public void execute (Template tmpl, Context ctx, Writer out)  {
-            Object value = ctx.getSectionValue(_name, _line); // won't return null
-            Iterator<?> iter = tmpl._compiler.collector.toIterator(value);
-            if (iter != null) {
-                int index = 0;
-                while (iter.hasNext()) {
-                    Object elem = iter.next();
-                    boolean onFirst = (index == 0), onLast = !iter.hasNext();
-                    executeSegs(tmpl, ctx.nest(elem, ++index, onFirst, onLast), out);
-                }
-            } else if (value instanceof Boolean) {
-                if ((Boolean)value) {
-                    executeSegs(tmpl, ctx, out);
-                }
-            } else if (value instanceof Lambda) {
-                try {
-                    ((Lambda)value).execute(tmpl.createFragment(_segs, ctx), out);
-                } catch (IOException ioe) {
-                    throw new MustacheException(ioe);
-                }
-            } else if (_compiler.emptyStringIsFalse && "".equals(value)) {
-                // omit the section
-            } else {
-                executeSegs(tmpl, ctx.nest(value, 0, false, false), out);
-            }
-        }
-        protected final Compiler _compiler;
-    }
-
-    /** A segment that represents an inverted section. */
-    protected static class InvertedSectionSegment extends BlockSegment {
-        public InvertedSectionSegment (String name, Template.Segment[] segs, int line) {
-            super(name, segs, line);
-        }
-        @Override public void execute (Template tmpl, Context ctx, Writer out)  {
-            Object value = ctx.getSectionValue(_name, _line); // won't return null
-            Iterator<?> iter = tmpl._compiler.collector.toIterator(value);
-            if (iter != null) {
-                if (!iter.hasNext()) {
-                    executeSegs(tmpl, ctx, out);
-                }
-            } else if (value instanceof Boolean) {
-                if (!(Boolean)value) {
-                    executeSegs(tmpl, ctx, out);
-                }
-            } // TODO: fail?
-        }
+        protected final List<Segment> _segs = new ArrayList<Segment>();
     }
 
     /** Map of strings that must be replaced inside html attributes and their replacements. (They
