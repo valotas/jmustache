@@ -81,6 +81,6 @@ public class Template
         }
     }
 
-    protected final Segment[] _segs;
-    protected final Mustache.Compiler _compiler;
+    private final Segment[] _segs;
+    private final Mustache.Compiler _compiler;
 }

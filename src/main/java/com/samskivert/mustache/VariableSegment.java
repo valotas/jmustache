@@ -18,5 +18,5 @@ class VariableSegment extends NamedSegment {
         String text = String.valueOf(value);
         write(out, _escapeHTML ? Mustache.escapeHTML(text) : text);
     }
-    protected boolean _escapeHTML;
+    private boolean _escapeHTML;
 }

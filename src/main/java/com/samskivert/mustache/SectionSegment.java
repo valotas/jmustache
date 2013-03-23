@@ -15,7 +15,7 @@ class SectionSegment extends BlockSegment {
     }
     @Override public void execute (Context ctx, Writer out)  {
         Object value = ctx.getSectionValue(_name, _line); // won't return null
-        Iterator<?> iter = ctx.compiler.collector.toIterator(value);
+        Iterator<?> iter = _compiler.collector.toIterator(value);
         if (iter != null) {
             int index = 0;
             while (iter.hasNext()) {
@@ -39,5 +39,5 @@ class SectionSegment extends BlockSegment {
             executeSegs(ctx.nest(value, 0, false, false), out);
         }
     }
-    protected final Compiler _compiler;
+    private final Compiler _compiler;
 }

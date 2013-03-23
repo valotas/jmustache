@@ -27,7 +27,7 @@ class IncludedTemplateSegment extends Segment {
         // would happen if we just called execute() with ctx.data
         _template.executeSegs(ctx, out);
     }
-    protected final String _name;
-    protected final Compiler _compiler;
-    protected Template _template;
+    private final String _name;
+    private final Compiler _compiler;
+    private Template _template;
 }

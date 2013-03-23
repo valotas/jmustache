@@ -10,5 +10,5 @@ class StringSegment extends Segment {
     @Override public void execute (Context ctx, Writer out) {
         write(out, _text);
     }
-    protected final String _text;
+    private final String _text;
 }
