@@ -8,18 +8,27 @@ import com.samskivert.mustache.Mustache.Compiler;
 class Accumulator {
     public Accumulator (Compiler compiler) {
         _compiler = compiler;
+        _segs = new ArrayList<Segment>();
     }
 
     public boolean justOpenedOrClosedBlock () {
         // return true if we just closed a block segment; we'll handle just opened elsewhere
-        return (!_segs.isEmpty() && _segs.get(_segs.size()-1) instanceof BlockSegment);
+        return (!isEmpty() && _segs.get(_segs.size()-1) instanceof BlockSegment);
+    }
+    
+    private final boolean isEmpty() {
+    	return _segs.isEmpty();
     }
 
-    public void addTextSegment (StringBuilder text) {
+    public final void addTextSegment (StringBuilder text) {
         if (text.length() > 0) {
-            _segs.add(new StringSegment(text.toString()));
+        	addSegment(new StringSegment(text.toString()));
             text.setLength(0);
         }
+    }
+    
+    private final void addSegment(Segment seg) {
+    	_segs.add(seg);
     }
 
     public Accumulator addTagSegment (final StringBuilder accum, final int tagLine) {
@@ -34,7 +43,7 @@ class Accumulator {
             return new Accumulator(_compiler) {
                 @Override public boolean justOpenedOrClosedBlock () {
                     // if we just opened this section, we'll have no segments
-                    return (_segs.isEmpty()) || super.justOpenedOrClosedBlock();
+                    return super.isEmpty() || super.justOpenedOrClosedBlock();
                 }
                 @Override public Segment[] finish () {
                     throw new MustacheParseException(
@@ -42,14 +51,14 @@ class Accumulator {
                 }
                 @Override protected Accumulator addCloseSectionSegment (String itag, int line) {
                     requireSameName(tag1, itag, line);
-                    outer._segs.add(
+                    outer.addSegment(
                         new SectionSegment(itag, super.finish(), tagLine, _compiler));
                     return outer;
                 }
             };
 
         case '>':
-            _segs.add(new IncludedTemplateSegment(tag1, _compiler));
+            addSegment(new IncludedTemplateSegment(tag1, _compiler));
             return this;
 
         case '^':
@@ -57,7 +66,7 @@ class Accumulator {
             return new Accumulator(_compiler) {
                 @Override public boolean justOpenedOrClosedBlock () {
                     // if we just opened this section, we'll have no segments
-                    return (_segs.isEmpty()) || super.justOpenedOrClosedBlock();
+                    return super.isEmpty() || super.justOpenedOrClosedBlock();
                 }
                 @Override public Segment[] finish () {
                     throw new MustacheParseException(
@@ -65,7 +74,7 @@ class Accumulator {
                 }
                 @Override protected Accumulator addCloseSectionSegment (String itag, int line) {
                     requireSameName(tag1, itag, line);
-                    outer._segs.add(new InvertedSectionSegment(itag, super.finish(), tagLine));
+                    outer.addSegment(new InvertedSectionSegment(itag, super.finish(), tagLine));
                     return outer;
                 }
             };
@@ -80,12 +89,12 @@ class Accumulator {
 
         case '&':
             requireNoNewlines(tag, tagLine);
-            _segs.add(new VariableSegment(tag1, false, tagLine));
+            addSegment(new VariableSegment(tag1, false, tagLine));
             return this;
 
         default:
             requireNoNewlines(tag, tagLine);
-            _segs.add(new VariableSegment(tag, _compiler.escapeHTML, tagLine));
+            addSegment(new VariableSegment(tag, _compiler.escapeHTML, tagLine));
             return this;
         }
     }
@@ -99,14 +108,14 @@ class Accumulator {
             "Section close tag with no open tag '" + tag + "'", line);
     }
 
-    protected static void requireNoNewlines (String tag, int line) {
+    private static void requireNoNewlines (String tag, int line) {
         if (tag.indexOf("\n") != -1 || tag.indexOf("\r") != -1) {
             throw new MustacheParseException(
                 "Invalid tag name: contains newline '" + tag + "'", line);
         }
     }
 
-    protected static void requireSameName (String name1, String name2, int line)
+    private static void requireSameName (String name1, String name2, int line)
     {
         if (!name1.equals(name2)) {
             throw new MustacheParseException("Section close tag with mismatched open tag '" +
@@ -115,5 +124,5 @@ class Accumulator {
     }
 
     private final Compiler _compiler;
-    protected final List<Segment> _segs = new ArrayList<Segment>();
+    private final List<Segment> _segs;
 }
