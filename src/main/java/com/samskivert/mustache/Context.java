@@ -10,8 +10,6 @@ import static com.samskivert.mustache.Consts.NO_FETCHER_FOUND;
 import java.util.Collections;
 import java.util.Map;
 
-import com.samskivert.mustache.Mustache.VariableFetcher;
-
 
 class Context
 {
