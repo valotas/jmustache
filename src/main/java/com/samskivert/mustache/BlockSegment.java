@@ -9,9 +9,9 @@ abstract class BlockSegment extends NamedSegment {
         super(name, line);
         _segs = segs;
     }
-    protected void executeSegs (Template tmpl, Context ctx, Writer out)  {
+    protected void executeSegs (Context ctx, Writer out)  {
         for (Segment seg : _segs) {
-            seg.execute(tmpl, ctx, out);
+            seg.execute(ctx, out);
         }
     }
     protected final Segment[] _segs;

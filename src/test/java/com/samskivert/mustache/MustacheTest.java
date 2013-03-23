@@ -493,7 +493,7 @@ public class MustacheTest
     @Test public void testLambda1 () {
         test("<b>Willy is awesome.</b>", "{{#bold}}{{name}} is awesome.{{/bold}}",
              context("name", "Willy", "bold", new Mustache.Lambda() {
-                 public void execute (Template.Fragment frag, Writer out) throws IOException {
+                 public void execute (Fragment frag, Writer out) throws IOException {
                      out.write("<b>");
                      frag.execute(out);
                      out.write("</b>");
@@ -504,7 +504,7 @@ public class MustacheTest
     @Test public void testLambda2 () {
         test("Slug bug potato!", "{{#l}}1{{/l}} {{#l}}2{{/l}} {{#l}}{{three}}{{/l}}",
              context("three", "3", "l", new Mustache.Lambda() {
-                 public void execute (Template.Fragment frag, Writer out) throws IOException {
+                 public void execute (Fragment frag, Writer out) throws IOException {
                      out.write(lookup(frag.execute()));
                  }
                  protected String lookup (String contents) {

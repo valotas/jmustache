@@ -9,7 +9,7 @@ class VariableSegment extends NamedSegment {
         super(name, line);
         _escapeHTML = escapeHTML;
     }
-    @Override public void execute (Template tmpl, Context ctx, Writer out)  {
+    @Override public void execute (Context ctx, Writer out)  {
         Object value = ctx.getValueOrDefault(_name, _line);
         if (value == null) {
             throw new MustacheException.Context("No key, method or field with name '" + _name +

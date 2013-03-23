@@ -9,7 +9,7 @@ class IncludedTemplateSegment extends Segment {
         _name = name;
         _compiler = compiler;
     }
-    @Override public void execute (Template tmpl, Context ctx, Writer out) {
+    @Override public void execute (Context ctx, Writer out) {
         // we compile our template lazily to avoid infinie recursion if a template includes
         // itself (see issue #13)
         if (_template == null) {

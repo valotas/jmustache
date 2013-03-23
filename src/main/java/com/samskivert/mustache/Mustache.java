@@ -162,7 +162,7 @@ public class Mustache
          * @param tmpl the fragment of the template that was passed to the lambda.
          * @param out the writer to which the lambda should write its output.
          */
-        void execute (Template.Fragment frag, Writer out) throws IOException;
+        void execute (Fragment frag, Writer out) throws IOException;
     }
 
     /** Used to read variables from values. */
