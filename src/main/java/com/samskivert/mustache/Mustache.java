@@ -563,7 +563,7 @@ public class Mustache
 
     /** Map of strings that must be replaced inside html attributes and their replacements. (They
      * need to be applied in order so amps are not double escaped.) */
-    protected static final String[][] ATTR_ESCAPES = {
+    private static final String[][] ATTR_ESCAPES = {
         { "&", "&amp;" },
         { "'", "&#39;" },
         { "\"", "&quot;" },
@@ -572,9 +572,9 @@ public class Mustache
     };
 
     /** Used when we have only a single character delimiter. */
-    protected static final char NO_CHAR = Character.MIN_VALUE;
+    private static final char NO_CHAR = Character.MIN_VALUE;
 
-    protected static final TemplateLoader FAILING_LOADER = new TemplateLoader() {
+    private static final TemplateLoader FAILING_LOADER = new TemplateLoader() {
         public Reader getTemplate (String name) {
             throw new UnsupportedOperationException("Template loading not configured");
         }
