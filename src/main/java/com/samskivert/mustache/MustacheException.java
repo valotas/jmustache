@@ -7,11 +7,12 @@ package com.samskivert.mustache;
 /**
  * An exception thrown when an error occurs parsing or executing a Mustache template.
  */
+@SuppressWarnings("serial")
 public class MustacheException extends RuntimeException
 {
     /** An exception thrown if we encounter a context error (e.g. a missing variable) while
      * compiling or executing a template. */
-    public static class Context extends MustacheException {
+	public static class Context extends MustacheException {
         /** The key that caused the problem. */
         public final String key;
 
