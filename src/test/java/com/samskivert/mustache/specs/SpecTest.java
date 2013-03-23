@@ -31,7 +31,7 @@ public class SpecTest {
     }
     
     public static String[] getSpecsGroupsToRun() {
-        return new String[] {"comments", "delimiters", "interpolation", "inverted", "sections", "partials"};
+        return new String[] {"interpolation" /*"comments", "delimiters", , "inverted", "sections", "partials"*/};
     }
     
     public void test(Spec spec) {
