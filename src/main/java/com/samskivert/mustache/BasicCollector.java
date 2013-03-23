@@ -3,6 +3,8 @@
 
 package com.samskivert.mustache;
 
+import static com.samskivert.mustache.Consts.*;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +26,7 @@ public abstract class BasicCollector implements Mustache.Collector
 
     public Mustache.VariableFetcher createFetcher (Object ctx, String name) {
         // support both .name and this.name to fetch members
-        if (name == Template.DOT_NAME || name == Template.THIS_NAME) {
+        if (name == DOT_NAME || name == THIS_NAME) {
             return THIS_FETCHER;
         }
 
@@ -42,7 +44,7 @@ public abstract class BasicCollector implements Mustache.Collector
     protected static final Mustache.VariableFetcher MAP_FETCHER = new Mustache.VariableFetcher() {
         public Object get (Object ctx, String name) throws Exception {
             Map<?,?> map = (Map<?,?>)ctx;
-            return map.containsKey(name) ? map.get(name) : Template.NO_FETCHER_FOUND;
+            return map.containsKey(name) ? map.get(name) : NO_FETCHER_FOUND;
         }
     };
 

@@ -617,7 +617,7 @@ public class Mustache
             _escapeHTML = escapeHTML;
         }
         @Override public void execute (Template tmpl, Context ctx, Writer out)  {
-            Object value = tmpl.getValueOrDefault(ctx, _name, _line);
+            Object value = ctx.getValueOrDefault(_name, _line);
             if (value == null) {
                 throw new MustacheException.Context("No key, method or field with name '" + _name +
                                                     "' on line " + _line, _name, _line);
@@ -649,7 +649,7 @@ public class Mustache
             _compiler = compiler;
         }
         @Override public void execute (Template tmpl, Context ctx, Writer out)  {
-            Object value = tmpl.getSectionValue(ctx, _name, _line); // won't return null
+            Object value = ctx.getSectionValue(_name, _line); // won't return null
             Iterator<?> iter = tmpl._compiler.collector.toIterator(value);
             if (iter != null) {
                 int index = 0;
@@ -683,7 +683,7 @@ public class Mustache
             super(name, segs, line);
         }
         @Override public void execute (Template tmpl, Context ctx, Writer out)  {
-            Object value = tmpl.getSectionValue(ctx, _name, _line); // won't return null
+            Object value = ctx.getSectionValue(_name, _line); // won't return null
             Iterator<?> iter = tmpl._compiler.collector.toIterator(value);
             if (iter != null) {
                 if (!iter.hasNext()) {
